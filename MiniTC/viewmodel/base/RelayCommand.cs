@@ -2,22 +2,22 @@
 using System.Windows.Input;
 
 namespace MiniTC.viewmodel.@base {
-    public class RelayCommand : ICommand {
+    public class RelayCommand<T> : ICommand where T : class {
 
-        private readonly Action<object> _action;
-        private readonly Predicate<object> _canExecute;
+        private readonly Action<T> _action;
+        private readonly Predicate<T> _canExecute;
 
-        public RelayCommand(Action<object> action, Predicate<object> canExecute = null) {
+        public RelayCommand(Action<T> action, Predicate<T> canExecute = null) {
             _action = action;
             _canExecute = canExecute;
         }
 
         public bool CanExecute(object parameter) {
-            return _canExecute?.Invoke(parameter) ?? true;
+            return _canExecute?.Invoke(parameter as T) ?? true;
         }
 
         public void Execute(object parameter) {
-            _action(parameter);
+            _action(parameter as T);
         }
 
         public event EventHandler CanExecuteChanged {
@@ -29,6 +29,11 @@ namespace MiniTC.viewmodel.@base {
                 if (_canExecute == null) return;
                 CommandManager.RequerySuggested -= value;
             }
+        }
+    }
+
+    public class RelayCommand : RelayCommand<object> {
+        public RelayCommand(Action<object> action, Predicate<object> canExecute = null) : base(action, canExecute) {
         }
     }
 }

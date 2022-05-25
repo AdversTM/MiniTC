@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using MiniTC.model;
 using MiniTC.util;
@@ -12,15 +11,14 @@ namespace MiniTC.viewmodel {
 
         public TCPanel Panel1 { get; } = new();
         public TCPanel Panel2 { get; } = new();
-        
-        public int ActivePanel { get; set; } = -1;
+
+        private int ActivePanel { get; set; } = -1;
         public string CopyText => ActivePanel == 1 ? "<< Copy" : "Copy >>";
 
         public ICommand Refresh1Command { get; set; }
         public ICommand Refresh2Command { get; set; }
         public ICommand CopyCommand { get; }
-        public ICommand Selected1Command { get; }
-        public ICommand Selected2Command { get; }
+        public ICommand SelectedCommand { get; }
 
         private TCPanel p1 => ActivePanel == 0 ? Panel1 : Panel2;
         private TCPanel p2 => ActivePanel == 0 ? Panel2 : Panel1;
@@ -30,30 +28,20 @@ namespace MiniTC.viewmodel {
                 _ => CopyFile(p1, p2),
                 _ => CanCopy()
             );
-            Selected1Command = new RelayCommand(_ => {
-                ActivePanel = 0;
-                var v = Panel1.Selected;
-                Panel2.Selected = null;
+            SelectedCommand = new RelayCommand<string>(e => {
+                ActivePanel = int.Parse(e);
+                var v = p1.Selected;
+                p2.Selected = null;
                 OnPropertyChanged("CopyText");
-                OnPropertyChanged("Panel2");
-                Panel1.Selected = v;
-                OnPropertyChanged("Panel1");
-            });
-            Selected2Command = new RelayCommand(_ => {
-                ActivePanel = 1;
-                var v = Panel2.Selected;
-                Panel1.Selected = null;
-                OnPropertyChanged("CopyText");
-                OnPropertyChanged("Panel1");
-                Panel2.Selected = v;
-                OnPropertyChanged("Panel2");
+                OnPropertyChanged(ActivePanel == 0 ? "Panel2" : "Panel1");
+                p1.Selected = v;
+                OnPropertyChanged(ActivePanel == 0 ? "Panel1" : "Panel2");
             });
         }
 
         private bool CanCopy() {
             if (ActivePanel < 0) return false;
-            return p1.FilePath != null && p2.Path != null && p1.Selected != null/* &&
-                   p1.FilePath != p2.Path + p1.Selected.Name*/;
+            return p1.FilePath != null && p2.Path != null && p1.Selected != null/* && p1.FilePath != p2.Path + p1.Selected.Name*/;
         }
 
         private void CopyFile(TCPanel panel1, TCPanel panel2) {

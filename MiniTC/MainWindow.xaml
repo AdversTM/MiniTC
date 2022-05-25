@@ -3,10 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:MiniTC"
         xmlns:vm="clr-namespace:MiniTC.viewmodel"
-        xmlns:cmd="http://www.galasoft.ch/mvvmlight"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="MiniTC" MinHeight="500" MinWidth="650" Height="700" Width="800">
 
@@ -41,20 +40,21 @@
         <local:PanelTC Grid.Row="0" Grid.Column="0" Path="{Binding Panel1.Path, Mode=OneWayToSource}"
                        ListSelected="{Binding Panel1.Selected, Mode=TwoWay}"
                        RefreshCommand="{Binding Refresh1Command, Mode=OneWayToSource}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="ItemSelected">
-                    <i:InvokeCommandAction Command="{Binding Selected1Command}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="ItemSelected">
+                    <b:InvokeCommandAction Command="{Binding SelectedCommand}" CommandParameter="0" />
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
         </local:PanelTC>
+        
         <local:PanelTC Grid.Row="0" Grid.Column="1" Path="{Binding Panel2.Path, Mode=OneWayToSource}"
                        ListSelected="{Binding Panel2.Selected, Mode=TwoWay}"
                        RefreshCommand="{Binding Refresh2Command, Mode=OneWayToSource}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="ItemSelected">
-                    <i:InvokeCommandAction Command="{Binding Selected2Command}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="ItemSelected">
+                    <b:InvokeCommandAction Command="{Binding SelectedCommand}" CommandParameter="1" />
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
 
         </local:PanelTC>
 
